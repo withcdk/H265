@@ -1,0 +1,11 @@
+/simplest_h265_codec/.vs
+/simplest_h265_codec/simplest_h265_decoder/Debug
+/simplest_h265_codec/simplest_h265_decoder/Release
+/simplest_h265_codec/simplest_h265_decoder/x64
+/simplest_h265_codec/simplest_h265_decoder/*.user
+/simplest_h265_codec/simplest_h265_encoder/Debug
+/simplest_h265_codec/simplest_h265_encoder/Release
+/simplest_h265_codec/simplest_h265_encoder/x64
+/simplest_h265_codec/simplest_h265_encoder/*.user
+/simplest_h265_codec/*.db
+/simplest_h265_codec/*.opendb
