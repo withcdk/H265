@@ -9,3 +9,8 @@
 /simplest_h265_codec/simplest_h265_encoder/*.user
 /simplest_h265_codec/*.db
 /simplest_h265_codec/*.opendb
+/simplest_h265_codec/bin/*.exe
+/simplest_h265_codec/bin/*.ilk
+/simplest_h265_codec/bin/*.pdb
+/simplest_h265_codec/simplest_h265_common/x64
+/simplest_h265_codec/simplest_h265_common/*.user
