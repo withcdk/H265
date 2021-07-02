@@ -14,3 +14,8 @@
 /simplest_h265_codec/bin/*.pdb
 /simplest_h265_codec/simplest_h265_common/x64
 /simplest_h265_codec/simplest_h265_common/*.user
+/simplest_h265_codec/bin/*.lib
+/simplest_h265_codec/bin/*.iobj
+/simplest_h265_codec/bin/*.ipdb
+/simplest_h265_codec/simplest_h265_common/Debug
+/simplest_h265_codec/simplest_h265_common/Release
