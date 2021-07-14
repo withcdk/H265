@@ -17,4 +17,6 @@ H265 codec（base on HM-16.20） and document notes.
 20210714
 1、删除了之前的simplest_svac2_codec解决方案，将simplest_svac2_codec解决方案下的名称改为简短的名称；
 2、配置了Debug|Release Win32|x64版本，解决相关编译问题。跟debug|win32版本配置类似；
+3、解决方案名字写错了，删除了解决方案；
+4、决定在本地克隆一份，测试好了，一周更新一次github；
 
