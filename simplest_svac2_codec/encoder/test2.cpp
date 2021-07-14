@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "../simplest_h265_common/test1.h"
+#include "../common/test1.h"
 
 int main(void)
 {

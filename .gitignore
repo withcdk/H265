@@ -11,3 +11,9 @@
 /simplest_svac2_codec/encoder/*.user
 /simplest_svac2_codec/*.db
 /simplest_svac2_codec/*.opendb
+/simplest_svac2_codec/common/Release
+/simplest_svac2_codec/common/x64
+/simplest_svac2_codec/decoder/Release
+/simplest_svac2_codec/decoder/x64
+/simplest_svac2_codec/encoder/x64
+/simplest_svac2_codec/encoder/Release
