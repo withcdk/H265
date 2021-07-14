@@ -19,3 +19,16 @@
 /simplest_h265_codec/bin/*.ipdb
 /simplest_h265_codec/simplest_h265_common/Debug
 /simplest_h265_codec/simplest_h265_common/Release
+/simplest_svac2_codec/.vs
+/simplest_svac2_codec/bin/*.lib
+/simplest_svac2_codec/bin/*.pdb
+/simplest_svac2_codec/bin/*.exe
+/simplest_svac2_codec/bin/*.ilk
+/simplest_svac2_codec/common/Debug
+/simplest_svac2_codec/common/*.user
+/simplest_svac2_codec/decoder/Debug
+/simplest_svac2_codec/decoder/*.user
+/simplest_svac2_codec/encoder/Debug
+/simplest_svac2_codec/encoder/*.user
+/simplest_svac2_codec/*.db
+/simplest_svac2_codec/*.opendb
