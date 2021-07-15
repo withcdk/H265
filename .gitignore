@@ -10,3 +10,5 @@
 /simplest_h265_codec/encoder/Debug
 /simplest_h265_codec/encoder/*.user
 /simplest_h265_codec/*.db
+/simplest_h265_codec/common/x64
+/simplest_h265_codec/decoder/x64

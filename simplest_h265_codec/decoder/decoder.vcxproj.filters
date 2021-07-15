@@ -18,5 +18,19 @@
     <ClCompile Include="decmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TAppDecTop.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TAppDecCfg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TAppDecTop.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TAppDecCfg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
