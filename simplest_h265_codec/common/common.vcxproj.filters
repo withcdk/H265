@@ -24,9 +24,15 @@
     <ClInclude Include="CommonDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="program_options_lite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test1.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="program_options_lite.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
