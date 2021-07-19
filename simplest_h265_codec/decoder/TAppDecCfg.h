@@ -19,6 +19,7 @@ protected:
 	std::string   m_bitstreamFileName;                    // input bitstream file name
 	                                                         //std::string ,使用string模板类应该包含<string>头文件，
 	                                                        //作为标准库的一部分，string定义在命名空间std中,chendekai
+
 	std::string   m_reconFileName;                        // output reconstruction file name
 
 public:

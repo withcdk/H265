@@ -1,7 +1,7 @@
 
 #include <string>//std::string，chendekai
 #include <list>//std::list
-#include <map>//std:map
+#include <map>//std::map
 
 
 
@@ -14,9 +14,9 @@ namespace df
 	{
 		struct Options;//像类一样，声明一个struct结构，前向声明，只声明，未定义，chendekai
 
-		/** OptionBase: Virtual base class for storing information relating to a
-		* specific option This base class describes common elements.  Type specific
-		* information should be stored in a derived class. */
+		/** OptionBase: Virtual base class（Virtual base class：虚基类） for storing information 
+		* relating to a specific option. This base class describes common elements.  Type specific
+		* information should be stored in a derived class（derived class：派生类）.            */
 		struct OptionBase
 		{
 			OptionBase(const std::string& name, const std::string& desc)
@@ -52,8 +52,6 @@ namespace df
 		{
 			~Options();
 
-
-
 			/**
 			* addOptions()的返回值为：调用OptionSpecific类的()构造函数,
 			* opts.addOptions()("help",do_help,false,"this help text")
@@ -63,9 +61,10 @@ namespace df
 			*/
 			OptionSpecific addOptions();
 
+
 			struct Names
 			{
-				Names() : opt(0) {};
+				Names() : opt(0) {};//struct声明的类，的构造函数，chendekai
 				~Names()
 				{
 					if (opt)
@@ -75,14 +74,14 @@ namespace df
 				}
 				std::list<std::string> opt_long;
 				std::list<std::string> opt_short;
-				OptionBase* opt;
+				OptionBase* opt;//OptionBase类已在前面定义，chendekai
 			};
 
 
 			void addOption(OptionBase *opt);
 			typedef std::list<Names*> NamesPtrList;
 			NamesPtrList opt_list;
-			typedef std::map<std::string, NamesPtrList> NamesMap;
+			typedef std::map<std::string, NamesPtrList> NamesMap;//#include <map>,STL头文件没有扩展名.h
 			NamesMap opt_long_map;
 			NamesMap opt_short_map;
 
@@ -99,11 +98,17 @@ namespace df
 
 
 			//函数调用运算符()重载，chendekai
+			/**
+			* Add option described by name to the parent Options list,
+			*   with storage for the option's value
+			*   with default_val as the default value
+			*   with desc as an optional help description
+			*/
 			template<typename T>
 			OptionSpecific&
 			operator()(const std::string& name, T& storage, T default_val, const std::string& desc = "")
 			{
-				parent.addOption(new Option<T>(name, storage, default_val, desc));
+				parent.addOption(new Option<T>(name, storage, default_val, desc));//派生类对象的地址赋给指向基类对象的指针变量,chendekai
 				return *this;
 			}
 

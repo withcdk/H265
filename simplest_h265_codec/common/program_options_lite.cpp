@@ -13,7 +13,10 @@ namespace df
 	{
 		Options::~Options()
 		{
-			
+			for (Options::NamesPtrList::iterator it = opt_list.begin(); it != opt_list.end(); it++)
+			{
+				delete *it;//变量名为it的迭代器，迭代器iterator相当于指针，删除初始化Options对象时，（Name *）所占空间，chendekai
+			}
 		}
 
 		void Options::addOption(OptionBase *opt)
@@ -41,7 +44,7 @@ namespace df
 				else
 				{
 					names->opt_long.push_back(opt_name);
-					opt_long_map[opt_name].push_back(names);
+					opt_long_map[opt_name].push_back(names);//下标方式访问map容器元素，chendekai
 				}
 				opt_start += opt_end + 1;
 			}
@@ -52,11 +55,9 @@ namespace df
 		/* Helper method to initiate adding options to Options */
 		OptionSpecific Options::addOptions()
 		{
-			return OptionSpecific(*this);//this指向本类对象，这里，this指向Options类对象，OptionSpecific(*this)是调用构造函数，chendekai
+			return OptionSpecific(*this);//this指向本类对象，这里，this指向Options类对象，
+			                                //OptionSpecific(*this)是调用构造函数（建一个匿名OptionSpecific对象），chendekai
 		}
-
-
-
 
 	}
 }
