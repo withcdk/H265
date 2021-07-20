@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 
 #include "../common/test1.h"
@@ -37,7 +38,19 @@ int main(int argc, char* argv[])
 		return returnCode;
 	}
 
+	// starting time
+	Double dResult;
+	clock_t lBefore = clock();
 
+
+
+
+
+	dResult = (Double)(clock() - lBefore) / CLOCKS_PER_SEC;//(clock() - lBefore)先进行强制类型转换成Double，然后再与CLOCKS_PER_SEC相除，chendekai
+	printf("\n Total Time: %12.3f sec.\n", dResult);
+
+	// destroy application decoder class
+	cTAppDecTop.destroy();
 
 	show_code(5);
 	printf("main_decoder\n");
