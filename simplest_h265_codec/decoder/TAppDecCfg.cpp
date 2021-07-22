@@ -33,6 +33,12 @@ Bool TAppDecCfg::parseCfg(Int argc, TChar* argv[])
 	("ReconFile,o",                  m_reconFileName,                string(""),         "reconstructed YUV output file name\n"
 		                                                                                 "YUV writing is skipped if omitted")
 	;
+
+	po::setDefaults(opts);
+	po::ErrorReporter err;
+	const list<const TChar*>& argv_unhandled = po::scanArgv(opts, argc, (const TChar**)argv, err);
+
+
 	return true;
 }
 
