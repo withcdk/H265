@@ -77,7 +77,7 @@ namespace df
 			*   allow each to parse value */
 			for (Options::NamesPtrList::iterator it = opt_list.begin(); it != opt_list.end(); ++it)
 			{
-				//(*it)->opt->parse(value, error_reporter);
+				(*it)->opt->parse(value, error_reporter);
 			}
 		}
 
@@ -86,17 +86,17 @@ namespace df
 		struct OptionWriter
 		{
 			OptionWriter(Options& rOpts, ErrorReporter& err)
-				: opts(rOpts), error_reporter(err)
+			: opts(rOpts), error_reporter(err)
 			{}
 			virtual ~OptionWriter() {}
 
 			virtual const string where() = 0;//纯虚函数，chendekai
 
 			bool storePair(bool allow_long, bool allow_short, const string& name, const string& value);
-			/*bool storePair(const string& name, const string& value)
+			bool storePair(const string& name, const string& value)
 			{
 				return storePair(true, true, name, value);
-			}*/
+			}
 
 			Options& opts;
 			ErrorReporter& error_reporter;
@@ -145,22 +145,59 @@ namespace df
 		struct ArgvParser : public OptionWriter
 		{
 			ArgvParser(Options& rOpts, ErrorReporter& rError_reporter)
-				: OptionWriter(rOpts, rError_reporter)
+			: OptionWriter(rOpts, rError_reporter)
 			{}
 
 			const string where() { return "command line"; }//where()返回的值为const型
 
-			//unsigned parseGNU(unsigned argc, const char* argv[]);
+			void parseGNU(unsigned argc, const char* argv[]);
 			unsigned parseSHORT(unsigned argc, const char* argv[]);
 		};
+
+
+
+		/**
+		* returns number of extra arguments consumed
+		*/
+		void ArgvParser::parseGNU(unsigned argc, const char* argv[])
+		{
+			/* gnu style long options can take the forms:
+			*  --option=arg（正确格式：--BitstreamFile=str.bin，chendekai）
+			*  --option arg（--b=str.bin（格式不对），或者--b str.bin和--BitstreamFile str.bin（不需要的参数），均为不正确格式，chendekai）
+			*/
+			string arg(argv[0]);
+			size_t arg_opt_start = arg.find_first_not_of('-');
+			size_t arg_opt_sep = arg.find_first_of('=');
+			string option = arg.substr(arg_opt_start, arg_opt_sep - arg_opt_start);
+
+			if (arg_opt_sep == string::npos)
+			{
+				/* no argument found => argument in argv[1] (maybe) */
+				/* xxx, need to handle case where option isn't required（处理不需要的参数，chendekai） */
+
+				if (!storePair(true, false, option, "1"))
+				{
+					return ;
+				}
+			}
+			else
+			{
+				/* argument occurs after option_sep */
+				string val = arg.substr(arg_opt_sep + 1);
+				storePair(true, false, option, val);
+			}
+
+		}
+
+
 
 
 
 		unsigned ArgvParser::parseSHORT(unsigned argc, const char* argv[])
 		{
 			/* short options can take the forms:
-			*  --option arg（没用，不能处理这种选项）
-			*  -option arg
+			*  --option arg（没用，不能处理这种选项，chendekai）
+			*  -option arg（-b   -o等，chendekai）
 			*/
 			string arg(argv[0]);
 			size_t arg_opt_start = arg.find_first_not_of('-');
@@ -210,7 +247,7 @@ namespace df
 				if (argv[i][1] != '-')
 				{
 					/* handle short (single dash，单破折号，chendekai) options */
-					/*   处理 单破折号  的命令行参数，chendekai   */
+					/*   处理 单破折号  的命令行参数，如-b   -o   等，chendekai   */
 					i += avp.parseSHORT(argc - i, &argv[i]);
 					continue;
 				}
@@ -227,7 +264,7 @@ namespace df
 				}
 
 				/* handle long (double dash) options */
-				//i += avp.parseGNU(argc - i, &argv[i]);//处理linux系统格式的命令参数，chendekai
+				avp.parseGNU(argc - i, &argv[i]);//处理linux系统格式的命令参数，chendekai
 			}
 
 			return non_option_arguments;

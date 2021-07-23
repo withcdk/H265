@@ -37,7 +37,10 @@ Bool TAppDecCfg::parseCfg(Int argc, TChar* argv[])
 	po::setDefaults(opts);
 	po::ErrorReporter err;
 	const list<const TChar*>& argv_unhandled = po::scanArgv(opts, argc, (const TChar**)argv, err);
-
+	for (list<const TChar*>::const_iterator it = argv_unhandled.begin(); it != argv_unhandled.end(); it++)
+	{
+		fprintf(stderr, "Unhandled argument ignored: `%s'\n", *it);
+	}
 
 	return true;
 }

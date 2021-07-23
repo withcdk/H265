@@ -2,6 +2,7 @@
 #include <string>//std::string，chendekai
 #include <list>//std::list
 #include <map>//std::map
+#include <sstream>//std::istringstream
 
 
 
@@ -14,8 +15,19 @@ namespace df
 	{
 		struct Options;//像类一样，声明一个struct结构，前向声明，只声明，未定义，chendekai
 
+		struct ParseFailure : public std::exception  //struct与class的继承混用，chendekai
+		{
+			ParseFailure(std::string arg0, std::string val0) throw() //throw()表示不会抛出任何类型异常，chendekai
+			: arg(arg0), val(val0)
+			{}
 
-		void setDefaults(Options& opts);
+			~ParseFailure() throw() {};
+
+			std::string arg;
+			std::string val;
+
+			const char* what() const throw() { return "Option Parse Failure"; }//暂时没用，chendekai
+		};
 
 
 		struct ErrorReporter
@@ -31,6 +43,7 @@ namespace df
 
 		extern ErrorReporter default_error_reporter;
 		std::list<const char*> scanArgv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& error_reporter = default_error_reporter);
+		void setDefaults(Options& opts);
 
 
 
@@ -41,14 +54,19 @@ namespace df
 		* information should be stored in a derived class（derived class：派生类）.            */
 		struct OptionBase
 		{
+			//OptionBase(const std::string& name, const std::string& desc)
+			//: opt_string(name), opt_desc(desc)
+			//{};//bug（？）：{}后面应该没有“;”,chendekai
+
+
 			OptionBase(const std::string& name, const std::string& desc)
-				: opt_string(name), opt_desc(desc)
-			{};
+			: opt_string(name), opt_desc(desc)
+			{}
 
 			virtual ~OptionBase() {}
 
 			/* parse argument arg, to obtain a value for the option */
-			//virtual void parse(const std::string& arg, ErrorReporter&) = 0;
+			virtual void parse(const std::string& arg, ErrorReporter&) = 0;
 			/* set the argument to the default value */
 			virtual void setDefault() = 0;//在基类中声明纯虚函数，以便派生类根据需要对它进行定义，chendekai
 
@@ -66,10 +84,11 @@ namespace df
 		struct Option : public OptionBase
 		{
 			Option(const std::string& name, T& storage, T default_val, const std::string& desc)
-				: OptionBase(name, desc), opt_storage(storage), opt_default_val(default_val)
+			: OptionBase(name, desc), opt_storage(storage), opt_default_val(default_val)
 			{}
+			
 
-			//void parse(const std::string& arg, ErrorReporter&);
+			void parse(const std::string& arg, ErrorReporter&);
 
 
 			void setDefault()
@@ -82,7 +101,32 @@ namespace df
 		};
 
 
+		/* Generic（泛型，chendekai） parsing */
+		template<typename T>
+		inline void
+		Option<T>::parse(const std::string& arg, ErrorReporter&)
+		{
+			std::istringstream arg_ss(arg, std::istringstream::in);
+			arg_ss.exceptions(std::ios::failbit);
+			try
+			{
+				arg_ss >> opt_storage;
+			}
+			catch (...)
+			{
+				throw ParseFailure(opt_string, arg);
+			}
+		}
 
+
+		/* string parsing is specialized -- copy the whole string, not just the
+		* first word */ // 这里其实是普通函数，与泛型parse()重载了，前面template<>并不代表模板函数，可以删除，chendekai
+		template<>
+		inline void
+		Option<std::string>::parse(const std::string& arg, ErrorReporter&)
+		{
+			opt_storage = arg;
+		}
 		
 		
 
@@ -120,7 +164,7 @@ namespace df
 			void addOption(OptionBase *opt);
 			typedef std::list<Names*> NamesPtrList;
 			NamesPtrList opt_list;
-			typedef std::map<std::string, NamesPtrList> NamesMap;//#include <map>,STL头文件没有扩展名.h
+			typedef std::map<std::string, NamesPtrList> NamesMap;//#include <map>,STL头文件没有扩展名.h，chendekai
 			NamesMap opt_long_map;
 			NamesMap opt_short_map;
 
