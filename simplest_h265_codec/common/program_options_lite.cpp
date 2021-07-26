@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <algorithm>//max()，chendekai
 
 #include "program_options_lite.h"
 
@@ -81,6 +82,110 @@ namespace df
 			}
 		}
 
+
+
+
+		static const char spaces[41] = "                                        ";
+
+
+
+
+		/* format the help text */
+		void doHelp(ostream& out, Options& opts, unsigned columns)
+		{
+			const unsigned pad_short = 3;
+			/* first pass: work out the longest option name */
+			unsigned max_width = 0;
+			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
+			{
+				ostringstream line(ios_base::out);
+				//doHelpOpt(line, **it, pad_short);//chendekai
+				max_width = max(max_width, (unsigned)line.tellp());
+			}
+
+			unsigned opt_width = min(max_width + 2, 28u + pad_short) + 2;
+			unsigned desc_width = columns - opt_width;
+
+			/* second pass: write out formatted option and help text.
+			*  - align start of help text to start at opt_width
+			*  - if the option text is longer than opt_width, place the help
+			*    text at opt_width on the next line.
+			*/
+			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
+			{
+				ostringstream line(ios_base::out);
+				line << "  ";
+				//doHelpOpt(line, **it, pad_short);//chendekai
+
+				const string& opt_desc = (*it)->opt->opt_desc;
+				if (opt_desc.empty())
+				{
+					/* no help text: output option, skip further processing */
+					cout << line.str() << endl;
+					continue;
+				}
+				size_t currlength = size_t(line.tellp());
+				if (currlength > opt_width)
+				{
+					/* if option text is too long (and would collide with the
+					* help text, split onto next line */
+					line << endl;
+					currlength = 0;
+				}
+				/* split up the help text, taking into account new lines,
+				*   (add opt_width of padding to each new line) */
+				for (size_t newline_pos = 0, cur_pos = 0; cur_pos != string::npos; currlength = 0)
+				{
+					/* print any required padding space for vertical alignment */
+					line << &(spaces[40 - opt_width + currlength]);
+					newline_pos = opt_desc.find_first_of('\n', newline_pos);
+					if (newline_pos != string::npos)
+					{
+						/* newline found, print substring (newline needn't be stripped) */
+						newline_pos++;
+						line << opt_desc.substr(cur_pos, newline_pos - cur_pos);
+						cur_pos = newline_pos;
+						continue;
+					}
+					if (cur_pos + desc_width > opt_desc.size())
+					{
+						/* no need to wrap text（不需要文本换行，chendekai）, remainder is less than avaliable width */
+						line << opt_desc.substr(cur_pos);
+						break;
+					}
+					/* find a suitable point to split text (avoid spliting in middle of word) */
+					size_t split_pos = opt_desc.find_last_of(' ', cur_pos + desc_width);
+					if (split_pos != string::npos)
+					{
+						/* eat up multiple space characters（吃掉多余的空格字符，chendekai） */
+						split_pos = opt_desc.find_last_not_of(' ', split_pos) + 1;
+					}
+
+					/* bad split if no suitable space to split at.  fall back to width */
+					bool bad_split = split_pos == string::npos || split_pos <= cur_pos;
+					if (bad_split)
+					{
+						split_pos = cur_pos + desc_width;
+					}
+					line << opt_desc.substr(cur_pos, split_pos - cur_pos);
+
+					/* eat up any space for the start of the next line */
+					if (!bad_split)
+					{
+						split_pos = opt_desc.find_first_not_of(' ', split_pos);
+					}
+					cur_pos = newline_pos = split_pos;
+
+					if (cur_pos >= opt_desc.size())
+					{
+						break;
+					}
+					line << endl;
+				}
+
+				cout << line.str() << endl;
+			}
+		}
 
 
 		struct OptionWriter
@@ -164,6 +269,7 @@ namespace df
 			/* gnu style long options can take the forms:
 			*  --option=arg（正确格式：--BitstreamFile=str.bin，chendekai）
 			*  --option arg（--b=str.bin（格式不对），或者--b str.bin和--BitstreamFile str.bin（不需要的参数），均为不正确格式，chendekai）
+			*  --option（正确格式，例如--help,chendekai）
 			*/
 			string arg(argv[0]);
 			size_t arg_opt_start = arg.find_first_not_of('-');

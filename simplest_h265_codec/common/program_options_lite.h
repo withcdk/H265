@@ -3,7 +3,7 @@
 #include <list>//std::list
 #include <map>//std::map
 #include <sstream>//std::istringstream
-
+#include <iostream>
 
 
 #ifndef __PROGRAM_OPTIONS_LITE__
@@ -42,6 +42,8 @@ namespace df
 		};
 
 		extern ErrorReporter default_error_reporter;
+
+		void doHelp(std::ostream& out, Options& opts, unsigned columns = 80);
 		std::list<const char*> scanArgv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& error_reporter = default_error_reporter);
 		void setDefaults(Options& opts);
 

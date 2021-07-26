@@ -42,6 +42,14 @@ Bool TAppDecCfg::parseCfg(Int argc, TChar* argv[])
 		fprintf(stderr, "Unhandled argument ignored: `%s'\n", *it);
 	}
 
+	if (argc == 1 || do_help)
+	{
+		po::doHelp(cout, opts);
+		return false;
+	}
+
+
+
 	return true;
 }
 
