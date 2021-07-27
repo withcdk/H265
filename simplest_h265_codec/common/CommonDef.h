@@ -31,7 +31,8 @@
 #ifdef __INTEL_COMPILER
 #define NVM_COMPILEDBY  "[ICC %d]", __INTEL_COMPILER
 #elif  _MSC_VER
-#define NVM_COMPILEDBY  "[VS %d]", _MSC_VER         //VC14.0 -> 1900 -> VS2015
+#define NVM_COMPILEDBY  "[VS %d]", _MSC_VER          //VC°æ±¾   _MSC_VER      VS°æ±¾
+                                                     //VC14.0 ---> 1900 ----> VS2015
                                                     //VC15.0 -> [1910,1920] -> VS2017
                                                     //VC16.0 -> (1920,  -> VS2019
                                                     //chendekai

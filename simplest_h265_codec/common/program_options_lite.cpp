@@ -63,14 +63,12 @@ namespace df
 			opt_list.push_back(names);
 		}
 
-
 		/* Helper method to initiate adding options to Options */
 		OptionSpecific Options::addOptions()
 		{
 			return OptionSpecific(*this);//this指向本类对象，这里，this指向Options类对象，
 			                                //OptionSpecific(*this)是调用构造函数（建一个匿名OptionSpecific对象），chendekai
 		}
-
 
 		static void setOptions(Options::NamesPtrList& opt_list, const string& value, ErrorReporter& error_reporter)
 		{
@@ -82,13 +80,38 @@ namespace df
 			}
 		}
 
-
-
-
 		static const char spaces[41] = "                                        ";
 
+		/* format help text for a single option:
+		* using the formatting: "-x, --long",
+		* if a short/long option isn't specified, it is not printed
+		*/
+		static void doHelpOpt(ostream& out, const Options::Names& entry, unsigned pad_short = 0)
+		{
+			pad_short = min(pad_short, 8u);//u表示unsigned型，chendekai
 
+			if (!entry.opt_short.empty())
+			{
+				unsigned pad = max((int)pad_short - (int)entry.opt_short.front().size(), 0);
+				out << "-" << entry.opt_short.front();
+				if (!entry.opt_long.empty())
+				{
+					out << ", ";
+				}
+				out << &(spaces[40 - pad]);//40-pad往后的每一个空格，输出pad个空格字符，40是表示spaces[]数组中40个空格字符，
+				                             //40这个数字可以任意设置，chendekai
+			}
+			else
+			{
+				out << "   ";
+				out << &(spaces[40 - pad_short]);
+			}
 
+			if (!entry.opt_long.empty())
+			{
+				out << "--" << entry.opt_long.front();
+			}
+		}
 
 		/* format the help text */
 		void doHelp(ostream& out, Options& opts, unsigned columns)
@@ -99,11 +122,12 @@ namespace df
 			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
 			{
 				ostringstream line(ios_base::out);
-				//doHelpOpt(line, **it, pad_short);//chendekai
-				max_width = max(max_width, (unsigned)line.tellp());
+				doHelpOpt(line, **it, pad_short);
+				max_width = max(max_width, (unsigned)line.tellp());//计算出help信息中，最长的“短option和长option长度之和”的长度，
+				                                                     //不带前面2个空格，chendekai
 			}
 
-			unsigned opt_width = min(max_width + 2, 28u + pad_short) + 2;
+			unsigned opt_width = min(max_width + 2, 28u + pad_short) + 2;//28表示option text经验（或偏好）值，chendekai
 			unsigned desc_width = columns - opt_width;
 
 			/* second pass: write out formatted option and help text.
@@ -115,7 +139,7 @@ namespace df
 			{
 				ostringstream line(ios_base::out);
 				line << "  ";
-				//doHelpOpt(line, **it, pad_short);//chendekai
+				doHelpOpt(line, **it, pad_short);
 
 				const string& opt_desc = (*it)->opt->opt_desc;
 				if (opt_desc.empty())
@@ -143,7 +167,7 @@ namespace df
 					{
 						/* newline found, print substring (newline needn't be stripped) */
 						newline_pos++;
-						line << opt_desc.substr(cur_pos, newline_pos - cur_pos);
+						line << opt_desc.substr(cur_pos, newline_pos - cur_pos);//line变量，格式化，写入流中，chendekai
 						cur_pos = newline_pos;
 						continue;
 					}
@@ -180,7 +204,7 @@ namespace df
 					{
 						break;
 					}
-					line << endl;
+					line << endl;//endl也格式化，写入流中，chendekai
 				}
 
 				cout << line.str() << endl;
@@ -206,8 +230,6 @@ namespace df
 			Options& opts;
 			ErrorReporter& error_reporter;
 		};
-
-
 
 		bool OptionWriter::storePair(bool allow_long, bool allow_short, const string& name, const string& value)
 		{
@@ -243,9 +265,6 @@ namespace df
 			return true;
 		}
 		
-
-
-
 		//在.cpp文件中声明结构体类型，chendekai
 		struct ArgvParser : public OptionWriter
 		{

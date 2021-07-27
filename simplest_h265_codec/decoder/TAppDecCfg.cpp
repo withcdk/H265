@@ -25,6 +25,7 @@ namespace po = df::program_options_lite;
 Bool TAppDecCfg::parseCfg(Int argc, TChar* argv[])
 {
 	Bool do_help = false;
+	Int warnUnknowParameter = 0;
 
 	po::Options opts;
 	opts.addOptions()//函数调用运算符()重载，建立一个匿名对象（没有定义新对象）来调用，chendekai
@@ -48,6 +49,20 @@ Bool TAppDecCfg::parseCfg(Int argc, TChar* argv[])
 		return false;
 	}
 
+	if (err.is_errored)
+	{
+		if (!warnUnknowParameter)
+		{
+			/* errors have already been reported to stderr */
+			return false;
+		}
+	}
+
+	if (m_bitstreamFileName.empty())
+	{
+		fprintf(stderr, "No input file specified, aborting\n");
+		return false;
+	}
 
 
 	return true;
