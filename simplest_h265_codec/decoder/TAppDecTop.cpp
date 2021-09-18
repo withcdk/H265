@@ -1,16 +1,13 @@
-/** \file     TAppDecTop.cpp
-    \brief    Decoder application class
+/**
+******************************************************************************
+*brief: Decoder application class
+*author: De-Kai Chen  <cdk5@foxmail.com>
+******************************************************************************
 */
 
 
 
-
 #include "TAppDecTop.h"
-
-
-
-
-
 
 
 Void TAppDecTop::create()

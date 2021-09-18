@@ -1,5 +1,8 @@
-/** \file     TAppDecCfg.h
-    \brief    Decoder configuration class (header)
+/**
+******************************************************************************
+*brief: Decoder configuration class (header)
+*author: De-Kai Chen  <cdk5@foxmail.com>
+******************************************************************************
 */
 
 #ifndef __TAPPDECCFG__
@@ -17,8 +20,8 @@ class TAppDecCfg
 {
 protected:
 	std::string   m_bitstreamFileName;                    // input bitstream file name
-	                                                         //std::string ,使用string模板类应该包含<string>头文件，
-	                                                        //作为标准库的一部分，string定义在命名空间std中,chendekai
+	                                                         //std::string ,using string template classes should contain a <string> header file,
+	                                                        // as part of the standard library, string is defined in the namespace std
 
 	std::string   m_reconFileName;                        // output reconstruction file name
 
@@ -26,17 +29,15 @@ public:
 	TAppDecCfg()
 	: m_bitstreamFileName()
 	, m_reconFileName()
-	{}//使用参数初始化表对数据成员初始化,chendekai
+	{}// initialize data members using the parameter initialization table
 
-	virtual ~TAppDecCfg() {} //虚析构函数,chendekai
+	virtual ~TAppDecCfg() {} // virtual destructor
 
-	Bool  parseCfg(Int argc, TChar* argv[]);   // initialize option class from configuration
+	Bool  Parse_cfg(Int argc, TChar* argv[]);   // initialize option class from configuration
 
 
 
 };
-
-
 
 
 #endif // __TAPPDECCFG__

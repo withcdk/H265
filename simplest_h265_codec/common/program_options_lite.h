@@ -1,5 +1,5 @@
 
-#include <string>//std::string，chendekai
+#include <string>//std::string
 #include <list>//std::list
 #include <map>//std::map
 #include <sstream>//std::istringstream
@@ -11,13 +11,14 @@
 
 namespace df
 {
-	namespace program_options_lite//嵌套的命名空间，chendekai
+	namespace program_options_lite//nested namespace
 	{
-		struct Options;//像类一样，声明一个struct结构，前向声明，只声明，未定义，chendekai
+		struct Options;//like a class, declare a struct structure, declared forward, declared only, undefined
 
-		struct ParseFailure : public std::exception  //struct与class的继承混用，chendekai
+		struct ParseFailure : public std::exception  //struct is mixed with class inheritance
 		{
-			ParseFailure(std::string arg0, std::string val0) throw() //throw()表示不会抛出任何类型异常，chendekai
+			ParseFailure(std::string arg0, std::string val0) throw() //throw(): indicate that no exception of 
+				                                                      // any type is thrown
 			: arg(arg0), val(val0)
 			{}
 
@@ -26,14 +27,19 @@ namespace df
 			std::string arg;
 			std::string val;
 
-			const char* what() const throw() { return "Option Parse Failure"; }//暂时没用，chendekai
+			const char* what() const throw() { return "Option Parse Failure"; }// useless temporarily
 		};
 
 
 		struct ErrorReporter
 		{
-			ErrorReporter() : is_errored(0) {};//显式声明一个无参的默认构造函数时，要给出该默认构造函数的定义或给出初始化表，
-			                                     //否则，只声明而不定义，容易造成构造函数重载，调用时的歧义性，chendekai
+			ErrorReporter() : is_errored(0) {};// When explicitly declaring a default constructor with
+			                                    // no parameters, the definition of the default constructor or 
+			                                    // the initialization table should be given.Otherwise, only
+			                                    // declaring the default constructor without definition will 
+			                                    // easily cause constructor overload and amiguity when calling
+			
+			
 			virtual ~ErrorReporter() {}
 			virtual std::ostream& error(const std::string& where);
 
@@ -43,37 +49,33 @@ namespace df
 
 		extern ErrorReporter default_error_reporter;
 
-		void doHelp(std::ostream& out, Options& opts, unsigned columns = 80);
-		std::list<const char*> scanArgv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& error_reporter = default_error_reporter);
-		void setDefaults(Options& opts);
+		void Do_help(std::ostream& out, Options& opts, unsigned columns = 80);
+		std::list<const char*> Scan_argv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& m_ErrorReporter = default_error_reporter);
+		void Set_defaults(Options& opts);
 
 
 
 
-
-		/** OptionBase: Virtual base class（Virtual base class：虚基类） for storing information 
-		* relating to a specific option. This base class describes common elements.  Type specific
-		* information should be stored in a derived class（derived class：派生类）.            */
+		// OptionBase: Virtual base class for storing information 
+		// relating to a specific option. This base class describes common elements.  Type specific
+		// information should be stored in a derived class.
 		struct OptionBase
 		{
-			//OptionBase(const std::string& name, const std::string& desc)
-			//: opt_string(name), opt_desc(desc)
-			//{};//bug（？）：{}后面应该没有“;”,chendekai
-
-
+			
 			OptionBase(const std::string& name, const std::string& desc)
-			: opt_string(name), opt_desc(desc)
+			: m_OptString(name), m_OptDesc(desc)
 			{}
 
 			virtual ~OptionBase() {}
 
-			/* parse argument arg, to obtain a value for the option */
+			// parse argument arg, to obtain a value for the option 
 			virtual void parse(const std::string& arg, ErrorReporter&) = 0;
-			/* set the argument to the default value */
-			virtual void setDefault() = 0;//在基类中声明纯虚函数，以便派生类根据需要对它进行定义，chendekai
+			// set the argument to the default value
+			virtual void Set_default() = 0;// declare a pure virtual function in a base class 
+			                              // so that derived classes can define it as needed
 
-			std::string opt_string;
-			std::string opt_desc;
+			std::string m_OptString;
+			std::string m_OptDesc;
 
 
 		};
@@ -81,29 +83,29 @@ namespace df
 		
 
 
-		/** Type specific option storage */
+		// Type specific option storage 
 		template<typename T>
 		struct Option : public OptionBase
 		{
-			Option(const std::string& name, T& storage, T default_val, const std::string& desc)
-			: OptionBase(name, desc), opt_storage(storage), opt_default_val(default_val)
+			Option(const std::string& name, T& storage, T defaultVal, const std::string& desc)
+			: OptionBase(name, desc), m_OptStorage(storage), m_OptDefaultVal(defaultVal)
 			{}
 			
 
 			void parse(const std::string& arg, ErrorReporter&);
 
 
-			void setDefault()
+			void Set_default()
 			{
-				opt_storage = opt_default_val;
+				m_OptStorage = m_OptDefaultVal;
 			}
 
-			T& opt_storage;
-			T opt_default_val;
+			T& m_OptStorage;
+			T m_OptDefaultVal;
 		};
 
 
-		/* Generic（泛型，chendekai） parsing */
+		// Generic parsing 
 		template<typename T>
 		inline void
 		Option<T>::parse(const std::string& arg, ErrorReporter&)
@@ -112,22 +114,24 @@ namespace df
 			arg_ss.exceptions(std::ios::failbit);
 			try
 			{
-				arg_ss >> opt_storage;
+				arg_ss >> m_OptStorage;
 			}
 			catch (...)
 			{
-				throw ParseFailure(opt_string, arg);
+				throw ParseFailure(m_OptString, arg);
 			}
 		}
 
 
-		/* string parsing is specialized -- copy the whole string, not just the
-		* first word */ // 这里其实是普通函数，与泛型parse()重载了，前面template<>并不代表模板函数，可以删除，chendekai
+		// String parsing is specialized -- copy the whole string, not just the
+		// first word.  
+		// This is actually a normal function, overridden with the generic parse().
+		// The template <> does not represent a template function, and can be removed.
 		template<>
 		inline void
 		Option<std::string>::parse(const std::string& arg, ErrorReporter&)
 		{
-			opt_storage = arg;
+			m_OptStorage = arg;
 		}
 		
 		
@@ -137,64 +141,60 @@ namespace df
 		{
 			~Options();
 
-			/**
-			* addOptions()的返回值为：调用OptionSpecific类的()构造函数,
-			* opts.addOptions()("help",do_help,false,"this help text")
-		    *                  ("BitstreamFile,b", m_bitstreamFileName, string(""), "bitstream input file name");
-			* 即建立一个匿名对象（没有定义新对象）来调用
-			* author:chendekai
-			*/
+
+
+			// the return value of addOptions() is to call the OptionSpecific class function call operator() 
+			// overloaded function
 			OptionSpecific addOptions();
 
 
 			struct Names
 			{
-				Names() : opt(0) {};//struct声明的类，的构造函数，chendekai
+				Names() : m_Opt(0) {};// constructor of a class declared by struct
 				~Names()
 				{
-					if (opt)
+					if (m_Opt)
 					{
-						delete opt;
+						delete m_Opt;
 					}
 				}
-				std::list<std::string> opt_long;
-				std::list<std::string> opt_short;
-				OptionBase* opt;//OptionBase类已在前面定义，chendekai
+				std::list<std::string> m_OptLong;
+				std::list<std::string> m_OptShort;
+				OptionBase* m_Opt;// the OptionBase class was defined earlier
 			};
 
 
-			void addOption(OptionBase *opt);
+			void addOption(OptionBase *m_Opt);
 			typedef std::list<Names*> NamesPtrList;
-			NamesPtrList opt_list;
-			typedef std::map<std::string, NamesPtrList> NamesMap;//#include <map>,STL头文件没有扩展名.h，chendekai
-			NamesMap opt_long_map;
-			NamesMap opt_short_map;
+			NamesPtrList m_OptList;
+			typedef std::map<std::string, NamesPtrList> NamesMap;//#include <map>,STL header files do not have .h extension
+			NamesMap m_OptLongMap;
+			NamesMap m_OptShortMap;
 
 		};
 
 
 
 		
-		/* Class with templated overloaded operator(), for use by Options::addOptions() */
+		// Class with templated overloaded operator(), for use by Options::addOptions() 
 		class OptionSpecific
 		{
 		public:
 			OptionSpecific(Options& parent_) : parent(parent_) {}
 
 
-			//函数调用运算符()重载，chendekai
-			/**
-			* Add option described by name to the parent Options list,
-			*   with storage for the option's value
-			*   with default_val as the default value
-			*   with desc as an optional help description
-			*/
+			// function call operator() is overloaded 
+			// Add option described by name to the parent Options list,
+			//   with storage for the option's value
+			//   with defaultVal as the default value
+			//   with desc as an optional help description
+			
 			template<typename T>
 			OptionSpecific&
-			operator()(const std::string& name, T& storage, T default_val, const std::string& desc = "")
+			operator()(const std::string& name, T& storage, T defaultVal, const std::string& desc = "")
 			{
-				parent.addOption(new Option<T>(name, storage, default_val, desc));//派生类对象的地址赋给指向基类对象的指针变量,
-				                                                                    //该指针只能访问派生类中的基类成员，chendekai
+				parent.addOption(new Option<T>(name, storage, defaultVal, desc));//The address of a derived object is assigned to a pointer variable to
+				                                                                  // a base object that can access only the base members of the derived class.
 				return *this;
 			}
 
@@ -206,8 +206,8 @@ namespace df
 
 
 
-	}/* namespace: program_options_lite */
-}/* namespace: df */
+	}// namespace: program_options_lite 
+}// namespace: df 
 
 
 #endif//__PROGRAM_OPTIONS_LITE__

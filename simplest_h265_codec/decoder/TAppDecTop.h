@@ -1,5 +1,8 @@
-/** \file     TAppDecTop.h
-    \brief    Decoder application class (header)
+/**
+******************************************************************************
+*brief: Decoder application class (header)
+*author: De-Kai Chen  <cdk5@foxmail.com>
+******************************************************************************
 */
 
 #ifndef __TAPPDECTOP__

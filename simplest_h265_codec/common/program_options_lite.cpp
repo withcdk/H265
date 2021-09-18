@@ -2,11 +2,11 @@
 
 #include <string>
 #include <iostream>
-#include <algorithm>//max()，chendekai
+#include <algorithm>//max()
 
 #include "program_options_lite.h"
 
-using namespace std;//为了使用std中的string，chendekai
+using namespace std;//to use string in std
 
 
 namespace df
@@ -25,186 +25,190 @@ namespace df
 
 		Options::~Options()
 		{
-			for (Options::NamesPtrList::iterator it = opt_list.begin(); it != opt_list.end(); it++)
+			for (Options::NamesPtrList::iterator it = m_OptList.begin(); it != m_OptList.end(); it++)
 			{
-				delete *it;//变量名为it的迭代器，迭代器iterator相当于指针，删除初始化Options对象时，（Name *）所占空间，chendekai
+				delete *it;// An iterator named "it" is the equivalent of a pointer. 
+				           // Delete the space occupied by (Name *) when initializing the Options object.
 			}
 		}
 
-		void Options::addOption(OptionBase *opt)
+		void Options::addOption(OptionBase *m_Opt)
 		{
 			Names* names = new Names();
-			names->opt = opt;
-			string& opt_string = opt->opt_string;
+			names->m_Opt = m_Opt;
+			string& m_OptString = m_Opt->m_OptString;
 
-			size_t opt_start = 0;
-			for (size_t opt_end = 0; opt_end != string::npos;)
+			size_t optStart = 0;
+			for (size_t optEnd = 0; optEnd != string::npos;)
 			{
-				opt_end = opt_string.find_first_of(',', opt_start);
-				bool force_short = 0;
-				if (opt_string[opt_start] == '-')
+				optEnd = m_OptString.find_first_of(',', optStart);
+				bool forceShort = 0;
+				if (m_OptString[optStart] == '-')
 				{
-					opt_start++;
-					force_short = 1;
+					optStart++;
+					forceShort = 1;
 				}
-				string opt_name = opt_string.substr(opt_start, opt_end - opt_start);
-				if (force_short || opt_name.size() == 1)
+				string optName = m_OptString.substr(optStart, optEnd - optStart);
+				if (forceShort || optName.size() == 1)
 				{
-					names->opt_short.push_back(opt_name);
-					opt_short_map[opt_name].push_back(names);
+					names->m_OptShort.push_back(optName);
+					m_OptShortMap[optName].push_back(names);
 				}
 				else
 				{
-					names->opt_long.push_back(opt_name);
-					opt_long_map[opt_name].push_back(names);//下标方式访问map容器元素，chendekai
+					names->m_OptLong.push_back(optName);
+					m_OptLongMap[optName].push_back(names);// access map container elements by subscript
 				}
-				opt_start += opt_end + 1;
+				optStart += optEnd + 1;
 			}
-			opt_list.push_back(names);
+			m_OptList.push_back(names);
 		}
 
-		/* Helper method to initiate adding options to Options */
+		// Helper method to initiate adding options to Options 
 		OptionSpecific Options::addOptions()
 		{
-			return OptionSpecific(*this);//this指向本类对象，这里，this指向Options类对象，
-			                                //OptionSpecific(*this)是调用构造函数（建一个匿名OptionSpecific对象），chendekai
+			return OptionSpecific(*this);//"this" refers to the class object, in this case, "this" refers to the Options class object,
+			                              // OptionSpecific(*this) calls the constructor(creates an anonymous OptionSpecific object)
+										  // e.g OptionSpecific(*this)("help",                         doHelp,                        false,              "this help text")
+										  //                          ("BitstreamFile,b",              m_bitstreamFileName,            string(""),         "bitstream input file name")
+										  //                          ("ReconFile,o",                  m_reconFileName,                string(""),         "reconstructed YUV output file name\n"
+										  //                                                                                                               "YUV writing is skipped if omitted")
 		}
 
-		static void setOptions(Options::NamesPtrList& opt_list, const string& value, ErrorReporter& error_reporter)
+		static void setOptions(Options::NamesPtrList& m_OptList, const string& value, ErrorReporter& m_ErrorReporter)
 		{
-			/* multiple options may be registered for the same name:
-			*   allow each to parse value */
-			for (Options::NamesPtrList::iterator it = opt_list.begin(); it != opt_list.end(); ++it)
+			// multiple options may be registered for the same name:
+			//   allow each to parse value 
+			for (Options::NamesPtrList::iterator it = m_OptList.begin(); it != m_OptList.end(); ++it)
 			{
-				(*it)->opt->parse(value, error_reporter);
+				(*it)->m_Opt->parse(value, m_ErrorReporter);
 			}
 		}
 
 		static const char spaces[41] = "                                        ";
 
-		/* format help text for a single option:
-		* using the formatting: "-x, --long",
-		* if a short/long option isn't specified, it is not printed
-		*/
-		static void doHelpOpt(ostream& out, const Options::Names& entry, unsigned pad_short = 0)
+		// format help text for a single option:
+		// using the formatting: "-x, --long",
+		// if a short/long option isn't specified, it is not printed
+		static void Do_help_opt(ostream& out, const Options::Names& entry, unsigned padShort = 0)
 		{
-			pad_short = min(pad_short, 8u);//u表示unsigned型，chendekai
+			padShort = min(padShort, 8u);//"u" stands for unsigned type
 
-			if (!entry.opt_short.empty())
+			if (!entry.m_OptShort.empty())
 			{
-				unsigned pad = max((int)pad_short - (int)entry.opt_short.front().size(), 0);
-				out << "-" << entry.opt_short.front();
-				if (!entry.opt_long.empty())
+				unsigned pad = max((int)padShort - (int)entry.m_OptShort.front().size(), 0);
+				out << "-" << entry.m_OptShort.front();
+				if (!entry.m_OptLong.empty())
 				{
 					out << ", ";
 				}
-				out << &(spaces[40 - pad]);//40-pad往后的每一个空格，输出pad个空格字符，40是表示spaces[]数组中40个空格字符，
-				                             //40这个数字可以任意设置，chendekai
+				out << &(spaces[40 - pad]);// Each space after 40-pad is printed with pad characters, 
+				                            // 40 stands for 40 Spaces in the Spaces [] array. The number 40 can be set arbitrarily.
 			}
 			else
 			{
 				out << "   ";
-				out << &(spaces[40 - pad_short]);
+				out << &(spaces[40 - padShort]);
 			}
 
-			if (!entry.opt_long.empty())
+			if (!entry.m_OptLong.empty())
 			{
-				out << "--" << entry.opt_long.front();
+				out << "--" << entry.m_OptLong.front();
 			}
 		}
 
-		/* format the help text */
-		void doHelp(ostream& out, Options& opts, unsigned columns)
+		// format the help text 
+		void Do_help(ostream& out, Options& opts, unsigned columns)
 		{
-			const unsigned pad_short = 3;
-			/* first pass: work out the longest option name */
-			unsigned max_width = 0;
-			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
+			const unsigned padShort = 3;
+			// first pass: work out the longest option name 
+			unsigned maxWidth = 0;
+			for (Options::NamesPtrList::iterator it = opts.m_OptList.begin(); it != opts.m_OptList.end(); it++)
 			{
 				ostringstream line(ios_base::out);
-				doHelpOpt(line, **it, pad_short);
-				max_width = max(max_width, (unsigned)line.tellp());//计算出help信息中，最长的“短option和长option长度之和”的长度，
-				                                                     //不带前面2个空格，chendekai
+				Do_help_opt(line, **it, padShort);
+				maxWidth = max(maxWidth, (unsigned)line.tellp());// calculate the length of the longest "sum of short option and 
+				                                                  // long option lengths" in the help message, without the first two Spaces
 			}
 
-			unsigned opt_width = min(max_width + 2, 28u + pad_short) + 2;//28表示option text经验（或偏好）值，chendekai
-			unsigned desc_width = columns - opt_width;
+			unsigned optWidth = min(maxWidth + 2, 28u + padShort) + 2;// 28 represents the option text experience(or preference) value
+			unsigned descWidth = columns - optWidth;
 
-			/* second pass: write out formatted option and help text.
-			*  - align start of help text to start at opt_width
-			*  - if the option text is longer than opt_width, place the help
-			*    text at opt_width on the next line.
-			*/
-			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
+			// second pass: write out formatted option and help text.
+			//  - align start of help text to start at optWidth
+			//  - if the option text is longer than optWidth, place the help
+			//    text at optWidth on the next line.
+			//
+			for (Options::NamesPtrList::iterator it = opts.m_OptList.begin(); it != opts.m_OptList.end(); it++)
 			{
 				ostringstream line(ios_base::out);
 				line << "  ";
-				doHelpOpt(line, **it, pad_short);
+				Do_help_opt(line, **it, padShort);
 
-				const string& opt_desc = (*it)->opt->opt_desc;
-				if (opt_desc.empty())
+				const string& m_OptDesc = (*it)->m_Opt->m_OptDesc;
+				if (m_OptDesc.empty())
 				{
-					/* no help text: output option, skip further processing */
+					// no help text: output option, skip further processing 
 					cout << line.str() << endl;
 					continue;
 				}
-				size_t currlength = size_t(line.tellp());
-				if (currlength > opt_width)
+				size_t currLength = size_t(line.tellp());
+				if (currLength > optWidth)
 				{
-					/* if option text is too long (and would collide with the
-					* help text, split onto next line */
+					// if option text is too long (and would collide with the
+					// help text, split onto next line 
 					line << endl;
-					currlength = 0;
+					currLength = 0;
 				}
-				/* split up the help text, taking into account new lines,
-				*   (add opt_width of padding to each new line) */
-				for (size_t newline_pos = 0, cur_pos = 0; cur_pos != string::npos; currlength = 0)
+				// split up the help text, taking into account new lines,
+				//   (add optWidth of padding to each new line) 
+				for (size_t newlinePos = 0, curPos = 0; curPos != string::npos; currLength = 0)
 				{
-					/* print any required padding space for vertical alignment */
-					line << &(spaces[40 - opt_width + currlength]);
-					newline_pos = opt_desc.find_first_of('\n', newline_pos);
-					if (newline_pos != string::npos)
+					// print any required padding space for vertical alignment 
+					line << &(spaces[40 - optWidth + currLength]);
+					newlinePos = m_OptDesc.find_first_of('\n', newlinePos);
+					if (newlinePos != string::npos)
 					{
-						/* newline found, print substring (newline needn't be stripped) */
-						newline_pos++;
-						line << opt_desc.substr(cur_pos, newline_pos - cur_pos);//line变量，格式化，写入流中，chendekai
-						cur_pos = newline_pos;
+						// newline found, print substring (newline needn't be stripped) 
+						newlinePos++;
+						line << m_OptDesc.substr(curPos, newlinePos - curPos);// line variable, formatted, written to the stream
+						curPos = newlinePos;
 						continue;
 					}
-					if (cur_pos + desc_width > opt_desc.size())
+					if (curPos + descWidth > m_OptDesc.size())
 					{
-						/* no need to wrap text（不需要文本换行，chendekai）, remainder is less than avaliable width */
-						line << opt_desc.substr(cur_pos);
+						// no need to wrap text, remainder is less than avaliable width 
+						line << m_OptDesc.substr(curPos);
 						break;
 					}
-					/* find a suitable point to split text (avoid spliting in middle of word) */
-					size_t split_pos = opt_desc.find_last_of(' ', cur_pos + desc_width);
-					if (split_pos != string::npos)
+					// find a suitable point to split text (avoid spliting in middle of word) 
+					size_t splitPos = m_OptDesc.find_last_of(' ', curPos + descWidth);
+					if (splitPos != string::npos)
 					{
-						/* eat up multiple space characters（吃掉多余的空格字符，chendekai） */
-						split_pos = opt_desc.find_last_not_of(' ', split_pos) + 1;
+						// eat up multiple space characters
+						splitPos = m_OptDesc.find_last_not_of(' ', splitPos) + 1;
 					}
 
-					/* bad split if no suitable space to split at.  fall back to width */
-					bool bad_split = split_pos == string::npos || split_pos <= cur_pos;
-					if (bad_split)
+					// bad split if no suitable space to split at.  fall back to width 
+					bool badSplit = splitPos == string::npos || splitPos <= curPos;
+					if (badSplit)
 					{
-						split_pos = cur_pos + desc_width;
+						splitPos = curPos + descWidth;
 					}
-					line << opt_desc.substr(cur_pos, split_pos - cur_pos);
+					line << m_OptDesc.substr(curPos, splitPos - curPos);
 
-					/* eat up any space for the start of the next line */
-					if (!bad_split)
+					// eat up any space for the start of the next line 
+					if (!badSplit)
 					{
-						split_pos = opt_desc.find_first_not_of(' ', split_pos);
+						splitPos = m_OptDesc.find_first_not_of(' ', splitPos);
 					}
-					cur_pos = newline_pos = split_pos;
+					curPos = newlinePos = splitPos;
 
-					if (cur_pos >= opt_desc.size())
+					if (curPos >= m_OptDesc.size())
 					{
 						break;
 					}
-					line << endl;//endl也格式化，写入流中，chendekai
+					line << endl;// "endl" is also formatted and written to the stream
 				}
 
 				cout << line.str() << endl;
@@ -215,40 +219,40 @@ namespace df
 		struct OptionWriter
 		{
 			OptionWriter(Options& rOpts, ErrorReporter& err)
-			: opts(rOpts), error_reporter(err)
+			: opts(rOpts), m_ErrorReporter(err)
 			{}
 			virtual ~OptionWriter() {}
 
-			virtual const string where() = 0;//纯虚函数，chendekai
+			virtual const string where() = 0;
 
-			bool storePair(bool allow_long, bool allow_short, const string& name, const string& value);
-			bool storePair(const string& name, const string& value)
+			bool Store_pair(bool allowLong, bool allowShort, const string& name, const string& value);
+			bool Store_pair(const string& name, const string& value)
 			{
-				return storePair(true, true, name, value);
+				return Store_pair(true, true, name, value);
 			}
 
 			Options& opts;
-			ErrorReporter& error_reporter;
+			ErrorReporter& m_ErrorReporter;
 		};
 
-		bool OptionWriter::storePair(bool allow_long, bool allow_short, const string& name, const string& value)
+		bool OptionWriter::Store_pair(bool allowLong, bool allowShort, const string& name, const string& value)
 		{
 			bool found = false;
-			Options::NamesMap::iterator opt_it;
-			if (allow_long)
+			Options::NamesMap::iterator optIt;
+			if (allowLong)
 			{
-				opt_it = opts.opt_long_map.find(name);
-				if (opt_it != opts.opt_long_map.end())
+				optIt = opts.m_OptLongMap.find(name);
+				if (optIt != opts.m_OptLongMap.end())
 				{
 					found = true;
 				}
 			}
 
-			/* check for the short list */
-			if (allow_short && !(found && allow_long))
+			// check for the short list 
+			if (allowShort && !(found && allowLong))
 			{
-				opt_it = opts.opt_short_map.find(name);
-				if (opt_it != opts.opt_short_map.end())
+				optIt = opts.m_OptShortMap.find(name);
+				if (optIt != opts.m_OptShortMap.end())
 				{
 					found = true;
 				}
@@ -256,60 +260,58 @@ namespace df
 
 			if (!found)
 			{
-				error_reporter.error(where())
+				m_ErrorReporter.error(where())
 					<< "Unknown option `" << name << "' (value:`" << value << "')\n";
 				return false;
 			}
 
-			setOptions((*opt_it).second, value, error_reporter);
+			setOptions((*optIt).second, value, m_ErrorReporter);
 			return true;
 		}
 		
-		//在.cpp文件中声明结构体类型，chendekai
+		// declare the structure type in a .cpp file
 		struct ArgvParser : public OptionWriter
 		{
-			ArgvParser(Options& rOpts, ErrorReporter& rError_reporter)
-			: OptionWriter(rOpts, rError_reporter)
+			ArgvParser(Options& rOpts, ErrorReporter& errorReporter)
+			: OptionWriter(rOpts, errorReporter)
 			{}
 
-			const string where() { return "command line"; }//where()返回的值为const型
+			const string where() { return "command line"; }//where() returns const
 
-			void parseGNU(unsigned argc, const char* argv[]);
-			unsigned parseSHORT(unsigned argc, const char* argv[]);
+			void Parse_GNU(unsigned argc, const char* argv[]);
+			unsigned Parse_SHORT(unsigned argc, const char* argv[]);
 		};
 
 
 
-		/**
-		* returns number of extra arguments consumed
-		*/
-		void ArgvParser::parseGNU(unsigned argc, const char* argv[])
+		
+		// returns number of extra arguments consumed
+		void ArgvParser::Parse_GNU(unsigned argc, const char* argv[])
 		{
-			/* gnu style long options can take the forms:
-			*  --option=arg（正确格式：--BitstreamFile=str.bin，chendekai）
-			*  --option arg（--b=str.bin（格式不对），或者--b str.bin和--BitstreamFile str.bin（不需要的参数），均为不正确格式，chendekai）
-			*  --option（正确格式，例如--help,chendekai）
-			*/
+			// gnu style long options can take the forms:
+			//  --option=arg（right format：--BitstreamFile=str.bin）
+			//  --option arg（--b=str.bin（format wrong），or --b str.bin and --BitstreamFile str.bin，all are incorrect format）
+			//  --option（right format，e.g --help）
 			string arg(argv[0]);
-			size_t arg_opt_start = arg.find_first_not_of('-');
-			size_t arg_opt_sep = arg.find_first_of('=');
-			string option = arg.substr(arg_opt_start, arg_opt_sep - arg_opt_start);
+			size_t argOptStart = arg.find_first_not_of('-');
+			size_t argOptSep = arg.find_first_of('=');
+			string option = arg.substr(argOptStart, argOptSep - argOptStart);
 
-			if (arg_opt_sep == string::npos)
+			if (argOptSep == string::npos)
 			{
-				/* no argument found => argument in argv[1] (maybe) */
-				/* xxx, need to handle case where option isn't required（处理不需要的参数，chendekai） */
+				// no argument found => argument in argv[1] (maybe) 
+				// xxx, need to handle case where option isn't required
 
-				if (!storePair(true, false, option, "1"))
+				if (!Store_pair(true, false, option, "1"))
 				{
 					return ;
 				}
 			}
 			else
 			{
-				/* argument occurs after option_sep */
-				string val = arg.substr(arg_opt_sep + 1);
-				storePair(true, false, option, val);
+				// argument occurs after option_sep 
+				string val = arg.substr(argOptSep + 1);
+				Store_pair(true, false, option, val);
 			}
 
 		}
@@ -318,26 +320,26 @@ namespace df
 
 
 
-		unsigned ArgvParser::parseSHORT(unsigned argc, const char* argv[])
+		unsigned ArgvParser::Parse_SHORT(unsigned argc, const char* argv[])
 		{
-			/* short options can take the forms:
-			*  --option arg（没用，不能处理这种选项，chendekai）
-			*  -option arg（-b   -o等，chendekai）
-			*/
+			// short options can take the forms:
+			//  --option arg
+			//  -option arg（-b   -o）
+			
 			string arg(argv[0]);
-			size_t arg_opt_start = arg.find_first_not_of('-');
-			string option = arg.substr(arg_opt_start);
-			/* lookup option */
+			size_t argOptStart = arg.find_first_not_of('-');
+			string option = arg.substr(argOptStart);
+			// lookup option
 
-			/* argument in argv[1] */
-			/* xxx, need to handle case where option isn't required */
+			// argument in argv[1] 
+			// xxx, need to handle case where option isn't required 
 			if (argc == 1)
 			{
-				error_reporter.error(where())//where()属于public成员函数，可以在结构体外使用，chendekai
+				m_ErrorReporter.error(where())// where () is a public member function that can be used outside the structure
 					<< "Not processing option `" << option << "' without argument\n";
-				return 0; /* run out of argv for argument */
+				return 0; // run out of argv for argument 
 			}
-			storePair(false, true, option, string(argv[1]));
+			Store_pair(false, true, option, string(argv[1]));
 
 			return 1;
 		}
@@ -347,63 +349,64 @@ namespace df
 
 
 		list<const char*>
-		scanArgv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& error_reporter)
+		Scan_argv(Options& opts, unsigned argc, const char* argv[], ErrorReporter& m_ErrorReporter)
 		{
-			ArgvParser avp(opts, error_reporter);
+			ArgvParser avp(opts, m_ErrorReporter);
 
-			/* a list for anything that didn't get handled as an option（不会被处理的选项list容器，chendekai） */
-			list<const char*> non_option_arguments;
+			// a list for anything that didn't get handled as an option 
+			list<const char*> nonOptionArguments;
 
 			for (unsigned i = 1; i < argc; i++)
 			{
 				if (argv[i][0] != '-')
 				{
-					non_option_arguments.push_back(argv[i]);
+					nonOptionArguments.push_back(argv[i]);
 					continue;
 				}
 
 				if (argv[i][1] == 0)
 				{
-					/* a lone single dash is an argument (usually signifying stdin) */
-					non_option_arguments.push_back(argv[i]);
+					// a lone single dash is an argument (usually signifying stdin) 
+					nonOptionArguments.push_back(argv[i]);
 					continue;
 				}
 
 				if (argv[i][1] != '-')
 				{
-					/* handle short (single dash，单破折号，chendekai) options */
-					/*   处理 单破折号  的命令行参数，如-b   -o   等，chendekai   */
-					i += avp.parseSHORT(argc - i, &argv[i]);
+					// handle short (single dash) options 
+					// handle command line arguments for single dashes, e.g -b, -o and so on
+					i += avp.Parse_SHORT(argc - i, &argv[i]);
 					continue;
 				}
 
 				if (argv[i][2] == 0)
 				{
-					/* a lone double dash（破折号，chendekai） ends option processing */
-					/****     -- b str.bin 这种命令行参数，全部识别为non option ,chendekai */
+					// a lone double dash ends option processing 
+					//-- b str.bin, this command argument all identified as non option
 					while (++i < argc)
 					{
-						non_option_arguments.push_back(argv[i]);
+						nonOptionArguments.push_back(argv[i]);
 					}
 					break;
 				}
 
-				/* handle long (double dash) options */
-				avp.parseGNU(argc - i, &argv[i]);//处理linux系统格式的命令参数，chendekai
+				// handle long (double dash) options 
+				avp.Parse_GNU(argc - i, &argv[i]);// handle command arguments in Linux format
 			}
 
-			return non_option_arguments;
+			return nonOptionArguments;
 		}
 
 
 
-		/* for all options in opts, set their storage to their specified
-		* default value（注释写的很清楚了，chendekai） */
-		void setDefaults(Options& opts)
+		// for all options in opts, set their storage to their specified
+		// default value 
+		void Set_defaults(Options& opts)
 		{
-			for (Options::NamesPtrList::iterator it = opts.opt_list.begin(); it != opts.opt_list.end(); it++)
-			{//多个参数一起处理，chendekai
-				(*it)->opt->setDefault();
+			// multiple parameters are processed together
+			for (Options::NamesPtrList::iterator it = opts.m_OptList.begin(); it != opts.m_OptList.end(); it++)
+			{
+				(*it)->m_Opt->Set_default();
 			}
 		}
 

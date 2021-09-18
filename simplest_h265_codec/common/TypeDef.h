@@ -1,8 +1,10 @@
-
-
-/** \file     TypeDef.h
-    \brief    Define macros, basic types, new types and enumerations
+/**
+******************************************************************************
+*brief: Define macros, basic types, new types and enumerations
+*author: De-Kai Chen  <cdk5@foxmail.com>
+******************************************************************************
 */
+
 #ifndef __TYPEDEF__
 #define __TYPEDEF__
 
