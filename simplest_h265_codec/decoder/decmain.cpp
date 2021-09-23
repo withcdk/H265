@@ -9,14 +9,14 @@
 #include "../common/CommonDef.h"
 
 
-#include "TAppDecTop.h"    
+#include "AppDecTop.h"
 
 
 int main(int argc, char* argv[])
 {
 	
 	Int returnCode = EXIT_SUCCESS;
-	TAppDecTop  cTAppDecTop;
+	AppDecTop  appDecTop;
 
 	// print information
 	fprintf(stdout, "\n");
@@ -28,12 +28,12 @@ int main(int argc, char* argv[])
 
 
 	// create application decoder class
-	cTAppDecTop.create();
+	appDecTop.create();
 
 	// parse configuration
-	if (!cTAppDecTop.Parse_cfg(argc, argv))
+	if (!appDecTop.Parse_cfg(argc, argv))
 	{
-		cTAppDecTop.destroy();
+		appDecTop.destroy();
 		returnCode = EXIT_FAILURE;
 		return returnCode;
 	}
@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
 	clock_t lBefore = clock();
 
 
+	appDecTop.decode();
 
 
 
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
 	printf("\n Total Time: %12.3f sec.\n", dResult);
 
 	// destroy application decoder class
-	cTAppDecTop.destroy();
+	appDecTop.destroy();
 
 	show_code(5);
 	printf("main_decoder\n");

@@ -15,21 +15,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="decmain.cpp">
+    <ClCompile Include="AppDecCfg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TAppDecTop.cpp">
+    <ClCompile Include="AppDecTop.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TAppDecCfg.cpp">
+    <ClCompile Include="DecMain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TAppDecTop.h">
+    <ClInclude Include="AppDecCfg.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="TAppDecCfg.h">
+    <ClInclude Include="AppDecTop.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

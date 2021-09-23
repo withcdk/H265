@@ -149,9 +149,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="decmain.cpp" />
-    <ClCompile Include="TAppDecCfg.cpp" />
-    <ClCompile Include="TAppDecTop.cpp" />
+    <ClCompile Include="AppDecCfg.cpp" />
+    <ClCompile Include="AppDecTop.cpp" />
+    <ClCompile Include="DecMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\common\common.vcxproj">
@@ -159,8 +159,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TAppDecCfg.h" />
-    <ClInclude Include="TAppDecTop.h" />
+    <ClInclude Include="AppDecCfg.h" />
+    <ClInclude Include="AppDecTop.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

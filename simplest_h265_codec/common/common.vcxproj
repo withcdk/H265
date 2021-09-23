@@ -150,12 +150,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CommonDef.h" />
-    <ClInclude Include="program_options_lite.h" />
+    <ClInclude Include="ProgramOptionsLite.h" />
     <ClInclude Include="test1.h" />
     <ClInclude Include="TypeDef.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="program_options_lite.cpp" />
+    <ClCompile Include="ProgramOptionsLite.cpp" />
     <ClCompile Include="test1.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

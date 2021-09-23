@@ -12,3 +12,4 @@
 /simplest_h265_codec/*.opendb
 /simplest_h265_codec/common/Win32
 /simplest_h265_codec/decoder/Win32
+/simplest_h265_codec/bin/*.bin
