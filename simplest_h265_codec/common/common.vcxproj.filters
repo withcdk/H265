@@ -27,12 +27,27 @@
     <ClInclude Include="ProgramOptionsLite.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="AnnexBread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NALread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="NAL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ComBitStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test1.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ProgramOptionsLite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AnnexBread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

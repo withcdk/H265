@@ -149,12 +149,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnnexBread.h" />
+    <ClInclude Include="ComBitStream.h" />
     <ClInclude Include="CommonDef.h" />
+    <ClInclude Include="NAL.h" />
+    <ClInclude Include="NALread.h" />
     <ClInclude Include="ProgramOptionsLite.h" />
     <ClInclude Include="test1.h" />
     <ClInclude Include="TypeDef.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnnexBread.cpp" />
     <ClCompile Include="ProgramOptionsLite.cpp" />
     <ClCompile Include="test1.cpp" />
   </ItemGroup>
