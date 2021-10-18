@@ -1,15 +1,1 @@
-/simplest_h265_codec/.vs
-/simplest_h265_codec/bin/*.lib
-/simplest_h265_codec/bin/*.pdb
-/simplest_h265_codec/bin/*.exe
-/simplest_h265_codec/bin/*.ilk
-/simplest_h265_codec/common/*.user
-/simplest_h265_codec/decoder/*.user
-/simplest_h265_codec/encoder/*.user
-/simplest_h265_codec/*.db
-/simplest_h265_codec/common/x64
-/simplest_h265_codec/decoder/x64
-/simplest_h265_codec/*.opendb
-/simplest_h265_codec/common/Win32
-/simplest_h265_codec/decoder/Win32
-/simplest_h265_codec/bin/*.bin
+
