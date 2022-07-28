@@ -144,7 +144,7 @@ Void LibComPicYuv::Create(const Int picWidth,
 			}
 		}
 
-		m_apiSubCuOffsetInBuffer[chan] = new Int[1 << (2 * maxCUdepth)];
+		m_apiSubCuOffsetInBuffer[chan] = new Int[(size_t)1 << (2 * maxCUdepth)];
 		const Int numSubBlockPartitions = (1 << maxCUdepth);
 		const Int minSubBlockHeight = (ctuHeight >> maxCUdepth);
 		const Int minSubBlockWidth = (ctuWidth >> maxCUdepth);
